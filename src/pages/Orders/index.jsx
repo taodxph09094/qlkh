@@ -9,7 +9,9 @@ import FormCustom from "../../components/FormCustom";
 
 const Orders = () => {
   const [open, setOpen] = useState(false);
-  const [keyword, setKeyword] = useState("");
+  const [monAndDate, setMonth] = useState("");
+  const [status, setStatus] = useState("");
+  const [number, setNumber] = useState("");
   const [mode, setMode] = useState(0);
   const [formData, setFormData] = useState({});
   const formRef = createRef();
@@ -20,9 +22,13 @@ const Orders = () => {
     setOpen(false);
   };
   const onRefresh = () => {
-    setKeyword("");
+    setStatus("");
+    setMonth();
+    setNumber("");
   };
-  const getOrders = useGetData(`${ORDERS.LIST}`);
+  const getOrders = useGetData(
+    `${ORDERS.LIST}?number=${number}&status=${status}`
+  );
   useEffect(() => {
     let isCurrent = true;
     if (!!isCurrent) {
@@ -31,7 +37,7 @@ const Orders = () => {
     return () => {
       isCurrent = false;
     };
-  }, [keyword]);
+  }, [status, number]);
 
   const data = [];
   getOrders.data.orders &&
@@ -53,6 +59,11 @@ const Orders = () => {
       title="Danh sách đơn hàng"
       showDrawer={showDrawer}
       onRefresh={onRefresh}
+      status={status}
+      number={number}
+      setNumber={setNumber}
+      setStatus={setStatus}
+      mode={2}
     >
       <Table bordered columns={columns} dataSource={data} />
       <DrawerCustom

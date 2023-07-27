@@ -50,6 +50,7 @@ const Brands = () => {
       showDrawer={showDrawer}
       onRefresh={onRefresh}
       setKeyword={setKeyword}
+      mode={1}
     >
       <Table bordered columns={columns} dataSource={data} />
       <DrawerCustom

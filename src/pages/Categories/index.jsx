@@ -48,6 +48,8 @@ const Categories = () => {
       showDrawer={showDrawer}
       onRefresh={onRefresh}
       setKeyword={setKeyword}
+      keyword={keyword}
+      mode={1}
     >
       <Table bordered columns={columns} dataSource={data} />
       <DrawerCustom

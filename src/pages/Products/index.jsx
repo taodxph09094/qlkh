@@ -1,7 +1,7 @@
 import React, { createRef, useEffect, useState } from "react";
 import { Table } from "antd";
 import { useGetData } from "../../hooks/services/useGetApi";
-import { PRODUCTS } from "../../constants/api";
+import { BRANDS, PRODUCTS } from "../../constants/api";
 import { columns } from "./column";
 import CardCustom from "../../components/CardCustom";
 import DrawerCustom from "../../components/Drawer";
@@ -13,6 +13,7 @@ const Products = () => {
   const [mode, setMode] = useState(0);
   const [formData, setFormData] = useState({});
   const formRef = createRef();
+  const [brandSearch, setBrandSearch] = useState();
   const showDrawer = () => {
     setOpen(true);
   };
@@ -21,18 +22,32 @@ const Products = () => {
   };
   const onRefresh = () => {
     setKeyword("");
+    setBrandSearch();
   };
-  const getProducts = useGetData(`${PRODUCTS.LIST}?keyword=${keyword}`);
+  const getProducts = useGetData(
+    brandSearch
+      ? `${PRODUCTS.LIST}?keyword=${keyword}&brand=${brandSearch}`
+      : `${PRODUCTS.LIST}?keyword=${keyword}`
+  );
+  const getBrands = useGetData(`${BRANDS.LIST}`);
   useEffect(() => {
     let isCurrent = true;
     if (!!isCurrent) {
       void getProducts._getData();
     }
+    void getBrands._getData();
     return () => {
       isCurrent = false;
     };
-  }, [keyword]);
-
+  }, [keyword, brandSearch]);
+  const brands = [{ value: "", label: "Tất cả" }];
+  getBrands.data.brand &&
+    getBrands.data.brand.forEach((item, i) => {
+      brands.push({
+        value: item.name,
+        label: item.name,
+      });
+    });
   const data = [];
   getProducts.data.products &&
     getProducts.data.products.forEach((item, i) => {
@@ -57,6 +72,11 @@ const Products = () => {
       showDrawer={showDrawer}
       onRefresh={onRefresh}
       setKeyword={setKeyword}
+      keyword={keyword}
+      mode={0}
+      brands={brands}
+      setBrandSearch={setBrandSearch}
+      brandSearch={brandSearch}
     >
       <Table bordered columns={columns} dataSource={data} />
       <DrawerCustom
