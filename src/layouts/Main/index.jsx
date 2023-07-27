@@ -9,10 +9,15 @@ import {
   UserOutlined,
   WindowsOutlined,
   SettingOutlined,
+  LogoutOutlined,
 } from "@ant-design/icons";
 import { RiBillLine } from "react-icons/ri";
 import { Breadcrumb, Layout, Menu, theme } from "antd";
-import { Link } from "react-router-dom";
+import { Link, Redirect, useHistory } from "react-router-dom";
+import { GetAuthSelector } from "../../redux/selectors";
+import authServices from "../../services/authServices";
+import { logout } from "../../redux/modules/auth";
+import { useDispatch } from "react-redux";
 
 const { Header, Content, Sider } = Layout;
 const items1 = ["1", "2", "3"].map((key) => ({
@@ -87,9 +92,19 @@ const items = [
   },
 ];
 const Main = (props) => {
+  const dispatch = useDispatch();
+  const auth = GetAuthSelector();
+  const history = useHistory();
+  const dataUserStorage = authServices.getUserLocalStorage();
+  const { isLogin } = auth;
   const {
     token: { colorBgContainer },
   } = theme.useToken();
+  const handleLogout = () => {
+    dispatch(logout());
+    <Redirect to="/login" />;
+    // history.push("/login");
+  };
   return (
     <Layout>
       <Header
@@ -125,6 +140,10 @@ const Main = (props) => {
                 <Link to={item.route}>{item.label}</Link>
               </Menu.Item>
             ))}
+            <Menu.Item key={111} icon={<LogoutOutlined />}>
+              <div onClick={handleLogout}> Đăng xuất</div>
+              {/* <Link to="/login">Dang xuat</Link> */}
+            </Menu.Item>
           </Menu>
         </Sider>
         <Layout
@@ -150,6 +169,11 @@ const Main = (props) => {
             }}
           >
             {props.children}
+            {/* {dataUserStorage.isLogged || isLogin ? (
+              props.children
+            ) : (
+              <Redirect to="/login" />
+            )} */}
           </Content>
         </Layout>
       </Layout>

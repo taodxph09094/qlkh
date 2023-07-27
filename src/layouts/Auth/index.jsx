@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Button, Checkbox, Form, Input, message } from "antd";
+import { Button, Spin, Form, Input, message } from "antd";
 import "../../assets/css/login.css";
 import { useDispatch } from "react-redux";
 import { Redirect } from "react-router-dom";
@@ -27,7 +27,11 @@ const Auth = () => {
     console.log("Failed:", errorInfo);
   };
 
-  return (
+  return isSendRequest ? (
+    <div className="loadingSpin">
+      <Spin size="large" />
+    </div>
+  ) : (
     <div className="login-page">
       <div className="login-box">
         <div className="illustration-wrapper">

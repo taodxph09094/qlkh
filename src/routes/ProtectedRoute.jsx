@@ -9,24 +9,22 @@ const ProtectedRoute = ({ isAdmin, component: Component, ...rest }) => {
   const { isLogin } = auth;
   return (
     <Fragment>
-      {(dataUserStorage.isLogged || isLogin) && (
-        <Route
-          {...rest}
-          render={(props) => {
-            if (isLogin === false) {
-              return <Redirect to="/login" />;
-            }
+      <Route
+        {...rest}
+        render={(props) => {
+          if (isLogin === false) {
+            return <Redirect to="/login" />;
+          }
 
-            if (
-              isAdmin === true &&
-              dataUserStorage.accountData.user.role !== "admin"
-            ) {
-              return <Redirect to="/login" />;
-            }
-            return <Component {...props} />;
-          }}
-        />
-      )}
+          if (
+            isAdmin === true &&
+            dataUserStorage.accountData.user.role !== "admin"
+          ) {
+            return <Redirect to="/login" />;
+          }
+          return <Component {...props} />;
+        }}
+      />
     </Fragment>
   );
 };
