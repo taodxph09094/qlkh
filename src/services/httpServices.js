@@ -9,6 +9,7 @@ import moment from "moment-timezone";
 const instance = axios.create({
   baseURL: BASE_API_URL,
   timeout: 30000,
+  withCredentials: true,
   headers: {
     Accept: "*/*",
     "Content-Type": "application/json",
@@ -24,10 +25,12 @@ instance.interceptors.request.use(
 
     if (authData?.access_token) {
       config.headers.Authorization = `Bearer ${authData?.access_token}`;
+      // config.headers.Cookie = `token${authData?.access_token}`;
     }
     if (authData?.language) {
       config.headers["Accept-Language"] = authData?.language;
     }
+    config.withCredentials = true;
     return config;
   },
   (error) => {
@@ -36,6 +39,7 @@ instance.interceptors.request.use(
   }
 );
 
+axios.defaults.withCredentials = true;
 instance.interceptors.response.use(
   (response) => {
     // if (response?.data?.message) {
@@ -59,6 +63,8 @@ instance.interceptors.response.use(
   async (error) => {
     // Do something with response error
     const { response, message } = error || {};
+    console.log(response);
+    console.log(data);
     const { data } = response || {};
     if (response.status === CodeConstants.UnAuthorized) {
       if (response?.data?.code !== CodeConstants.BAD_CREDENTIALS) {

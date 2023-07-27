@@ -43,7 +43,7 @@ const Drawer = ({ title, cancel, submit }) => {
           </Space>
         }
       >
-        <Form layout="vertical" hideRequiredMark >
+        <Form layout="vertical" hideRequiredMark>
           <Row gutter={16}>
             <Col span={12}>
               <Form.Item

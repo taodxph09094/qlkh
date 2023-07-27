@@ -1,10 +1,9 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Button,
   Card,
   Space,
   Table,
-  Tag,
   Drawer,
   Col,
   DatePicker,
@@ -13,7 +12,14 @@ import {
   Row,
   Select,
 } from "antd";
-import { PlusOutlined } from "@ant-design/icons";
+import {
+  PlusOutlined,
+  SearchOutlined,
+  ReloadOutlined,
+} from "@ant-design/icons";
+import { useGetData } from "../../hooks/services/useGetApi";
+import { PRODUCTS } from "../../constants/api";
+import { columns } from "./column";
 const { Option } = Select;
 
 const Products = () => {
@@ -24,94 +30,74 @@ const Products = () => {
   const onClose = () => {
     setOpen(false);
   };
-  const columns = [
-    {
-      title: "Name",
-      dataIndex: "name",
-      key: "name",
-      render: (text) => <a>{text}</a>,
-    },
-    {
-      title: "Age",
-      dataIndex: "age",
-      key: "age",
-    },
-    {
-      title: "Address",
-      dataIndex: "address",
-      key: "address",
-    },
-    {
-      title: "Tags",
-      key: "tags",
-      dataIndex: "tags",
-      render: (_, { tags }) => (
-        <>
-          {tags.map((tag) => {
-            let color = tag.length > 5 ? "geekblue" : "green";
-            if (tag === "loser") {
-              color = "volcano";
-            }
-            return (
-              <Tag color={color} key={tag}>
-                {tag.toUpperCase()}
-              </Tag>
-            );
-          })}
-        </>
-      ),
-    },
-    {
-      title: "Action",
-      key: "action",
-      render: (_, record) => (
-        <Space size="middle">
-          <a>Invite {record.name}</a>
-          <a>Delete</a>
-        </Space>
-      ),
-    },
-  ];
-  const data = [
-    {
-      key: "1",
-      name: "John Brown",
-      age: 32,
-      address: "New York No. 1 Lake Park",
-      tags: ["nice", "developer"],
-    },
-    {
-      key: "2",
-      name: "Jim Green",
-      age: 42,
-      address: "London No. 1 Lake Park",
-      tags: ["loser"],
-    },
-    {
-      key: "3",
-      name: "Joe Black",
-      age: 32,
-      address: "Sydney No. 1 Lake Park",
-      tags: ["cool", "teacher"],
-    },
-  ];
+  const getProducts = useGetData(PRODUCTS.LIST);
+  useEffect(() => {
+    let isCurrent = true;
+    if (!!isCurrent) {
+      void getProducts._getData();
+    }
+    return () => {
+      isCurrent = false;
+    };
+  }, []);
+
+  const data = [];
+  getProducts.data.products &&
+    getProducts.data.products.forEach((item, i) => {
+      data.push({
+        _id: item._id,
+        number: i + 1,
+        name: item.name,
+        price: item.price - (item.price * item.promotion) / 100,
+        promotion: item.promotion,
+        importPrice: item.importPrice,
+        Stock: item.Stock,
+        category: item.category,
+        supplier: item.supplier,
+        brand: item.brand,
+        createdAt: item.createdAt,
+      });
+    });
+  console.log(data);
   return (
     <Card
-      title="title"
+      title="Danh sách sản phẩm"
       extra={
         <Space>
-          <Button type="primary" onClick={showDrawer} icon={<PlusOutlined />}>
+          <Select
+            showSearch
+            placeholder="Tìm kiếm theo danh mục"
+            optionFilterProp="children"
+            // onChange={onChangeSelect}
+            filterOption={(input, option) =>
+              (option?.label ?? "").toLowerCase().includes(input.toLowerCase())
+            }
+            // options={brands}
+          />
+          <Select
+            showSearch
+            placeholder="Tìm kiếm theo thương hiệu"
+            optionFilterProp="children"
+            // onChange={onChangeSelect}
+            filterOption={(input, option) =>
+              (option?.label ?? "").toLowerCase().includes(input.toLowerCase())
+            }
+            // options={brands}
+          />
+          <Input
+            placeholder="Tìm kiếm theo tên "
+            // onChange={(e) => setKeyword(e.target.value)}
+          />
+          <Button type="primary" onClick={showDrawer} icon={<ReloadOutlined />}>
+            Lam moi
+          </Button>
+          <Button type="primary" onClick={showDrawer} icon={<SearchOutlined />}>
             Tim kiem
           </Button>
           <Button type="primary" onClick={showDrawer} icon={<PlusOutlined />}>
             Them moi
           </Button>
         </Space>
-      }
-      style={
-        {
-          // width: 300,
-        }
       }
     >
       <Table bordered columns={columns} dataSource={data} />

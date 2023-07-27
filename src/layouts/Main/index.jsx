@@ -133,7 +133,7 @@ const Main = (props) => {
             theme="dark"
             mode="inline"
             defaultSelectedKeys={["1"]}
-            style={{ minHeight: 850 }}
+            style={{ height: "100%" }}
           >
             {items.map((item) => (
               <Menu.Item key={item.key} icon={item.icon}>
