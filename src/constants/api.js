@@ -7,3 +7,15 @@ export const AUTH_URL = {
 export const PRODUCTS = {
   LIST: `api/v1/admin/products`,
 };
+export const CATEGORIES = {
+  LIST: `api/v1/admin/categories`,
+};
+export const BRANDS = {
+  LIST: `api/v1/admin/brand`,
+};
+export const SUPPLIER = {
+  LIST: `api/v1/admin/supplier`,
+};
+export const ORDERS = {
+  LIST: `api/v1/admin/orders`,
+};

@@ -31,7 +31,7 @@ const CardCustom = (props) => {
           <Input
             placeholder="Tìm kiếm theo tên "
             // value={keyword}
-            // onChange={(e) => setKeyword(e.target.value)}
+            onChange={(e) => props.setKeyword(e.target.value)}
           />
           <Button
             type="primary"

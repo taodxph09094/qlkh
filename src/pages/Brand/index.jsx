@@ -1,13 +1,13 @@
 import React, { createRef, useEffect, useState } from "react";
 import { Table } from "antd";
 import { useGetData } from "../../hooks/services/useGetApi";
-import { PRODUCTS } from "../../constants/api";
+import { BRANDS } from "../../constants/api";
 import { columns } from "./column";
 import CardCustom from "../../components/CardCustom";
 import DrawerCustom from "../../components/Drawer";
 import FormCustom from "../../components/FormCustom";
 
-const Products = () => {
+const Brands = () => {
   const [open, setOpen] = useState(false);
   const [keyword, setKeyword] = useState("");
   const [mode, setMode] = useState(0);
@@ -22,11 +22,11 @@ const Products = () => {
   const onRefresh = () => {
     setKeyword("");
   };
-  const getProducts = useGetData(`${PRODUCTS.LIST}?keyword=${keyword}`);
+  const getBrands = useGetData(`${BRANDS.LIST}?keyword=${keyword}`);
   useEffect(() => {
     let isCurrent = true;
     if (!!isCurrent) {
-      void getProducts._getData();
+      void getBrands._getData();
     }
     return () => {
       isCurrent = false;
@@ -34,26 +34,19 @@ const Products = () => {
   }, [keyword]);
 
   const data = [];
-  getProducts.data.products &&
-    getProducts.data.products.forEach((item, i) => {
+  getBrands.data.brand &&
+    getBrands.data.brand.forEach((item, i) => {
       data.push({
         _id: item._id,
         number: i + 1,
         name: item.name,
-        price: item.price - (item.price * item.promotion) / 100,
-        promotion: item.promotion,
-        importPrice: item.importPrice,
-        Stock: item.Stock,
-        category: item.category,
-        supplier: item.supplier,
-        brand: item.brand,
-        createdAt: item.createdAt,
+        address: item.address,
       });
     });
 
   return (
     <CardCustom
-      title="Danh sách sản phẩm"
+      title="Danh sách thương hiệu"
       showDrawer={showDrawer}
       onRefresh={onRefresh}
       setKeyword={setKeyword}
@@ -73,4 +66,4 @@ const Products = () => {
   );
 };
 
-export default Products;
+export default Brands;

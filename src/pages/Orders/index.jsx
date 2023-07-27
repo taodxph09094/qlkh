@@ -1,13 +1,13 @@
 import React, { createRef, useEffect, useState } from "react";
 import { Table } from "antd";
 import { useGetData } from "../../hooks/services/useGetApi";
-import { PRODUCTS } from "../../constants/api";
+import { BRANDS, ORDERS } from "../../constants/api";
 import { columns } from "./column";
 import CardCustom from "../../components/CardCustom";
 import DrawerCustom from "../../components/Drawer";
 import FormCustom from "../../components/FormCustom";
 
-const Products = () => {
+const Orders = () => {
   const [open, setOpen] = useState(false);
   const [keyword, setKeyword] = useState("");
   const [mode, setMode] = useState(0);
@@ -22,11 +22,11 @@ const Products = () => {
   const onRefresh = () => {
     setKeyword("");
   };
-  const getProducts = useGetData(`${PRODUCTS.LIST}?keyword=${keyword}`);
+  const getOrders = useGetData(`${ORDERS.LIST}`);
   useEffect(() => {
     let isCurrent = true;
     if (!!isCurrent) {
-      void getProducts._getData();
+      void getOrders._getData();
     }
     return () => {
       isCurrent = false;
@@ -34,29 +34,25 @@ const Products = () => {
   }, [keyword]);
 
   const data = [];
-  getProducts.data.products &&
-    getProducts.data.products.forEach((item, i) => {
+  getOrders.data.orders &&
+    getOrders.data.orders.forEach((item, i) => {
       data.push({
         _id: item._id,
         number: i + 1,
-        name: item.name,
-        price: item.price - (item.price * item.promotion) / 100,
-        promotion: item.promotion,
-        importPrice: item.importPrice,
-        Stock: item.Stock,
-        category: item.category,
-        supplier: item.supplier,
-        brand: item.brand,
-        createdAt: item.createdAt,
+        userName: item.userName,
+        shippingInfo: item.shippingInfo,
+        orderItems: item.orderItems,
+        itemsPrice: item.itemsPrice,
+        dateFind: item.dateFind,
+        orderStatus: item.orderStatus,
       });
     });
-
+  console.log(getOrders);
   return (
     <CardCustom
-      title="Danh sách sản phẩm"
+      title="Danh sách đơn hàng"
       showDrawer={showDrawer}
       onRefresh={onRefresh}
-      setKeyword={setKeyword}
     >
       <Table bordered columns={columns} dataSource={data} />
       <DrawerCustom
@@ -73,4 +69,4 @@ const Products = () => {
   );
 };
 
-export default Products;
+export default Orders;
