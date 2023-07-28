@@ -3,46 +3,44 @@ import { useGetData } from "../../../hooks/services/useGetApi";
 import { message } from "antd";
 import { usePostData } from "../../../hooks/services/usePostApi";
 import { useDeleteData } from "../../../hooks/services/useDeleteApi";
-import { CATEGORIES } from "../../../constants/api";
+import { SUPPLIER } from "../../../constants/api";
 
-export const CategoriesDataList = (keyword, refreshTable) => {
+export const SupplierDataList = (keyword, refreshTable) => {
   const data = [];
-  const getCategories = useGetData(`${CATEGORIES.LIST}?keyword=${keyword}`);
+  const getSuppliers = useGetData(`${SUPPLIER.LIST}?keyword=${keyword}`);
   useEffect(() => {
     let isCurrent = true;
     if (!!isCurrent) {
-      void getCategories._getData();
+      void getSuppliers._getData();
     }
     return () => {
       isCurrent = false;
     };
   }, [keyword, refreshTable]);
-  const categoriesSelect = [{ value: "", label: "Tất cả" }];
-  getCategories.data.categories &&
-    getCategories.data.categories.forEach((item, i) => {
-      categoriesSelect.push({
+  const SuppliersSelect = [{ value: "", label: "Tất cả" }];
+  getSuppliers.data.supplier &&
+    getSuppliers.data.supplier.forEach((item, i) => {
+      SuppliersSelect.push({
         value: item.name,
         label: item.name,
       });
     });
-  getCategories.data.categories &&
-    getCategories.data.categories.forEach((item, i) => {
+  getSuppliers.data.supplier &&
+    getSuppliers.data.supplier.forEach((item, i) => {
       data.push({
         _id: item._id,
         number: i + 1,
         name: item.name,
+        address: item.address,
       });
     });
-  const brand = { data, categoriesSelect };
-  if (
-    getCategories.isLoading === false &&
-    getCategories.data.success === true
-  ) {
-    return brand;
+  const supplier = { data, SuppliersSelect };
+  if (getSuppliers.isLoading === false && getSuppliers.data.success === true) {
+    return supplier;
   }
 };
 
-export const CategoriesDataPost = (refreshTable, setRefreshTable, setOpen) => {
+export const SupplierDataPost = (refreshTable, setRefreshTable, setOpen) => {
   const alertSuccess = (value) => {
     if (value.status === 201) {
       message.success("Thêm thành công");
@@ -63,15 +61,15 @@ export const CategoriesDataPost = (refreshTable, setRefreshTable, setOpen) => {
     alertFail
   );
   const create = (payload) => {
-    return postData._postData(`${CATEGORIES.CREATE}`, payload);
+    return postData._postData(`${SUPPLIER.CREATE}`, payload);
   };
-  const postCategories = async (payload) => {
+  const postSupplier = async (payload) => {
     await create(payload);
   };
-  return postCategories;
+  return postSupplier;
 };
 
-export const CategoriesDataDelete = (refreshTable, setRefreshTable) => {
+export const SupplierDataDelete = (refreshTable, setRefreshTable) => {
   const alertSuccess = (value) => {
     if (value.status === 200) {
       message.success("Xoá thành công");
@@ -90,11 +88,11 @@ export const CategoriesDataDelete = (refreshTable, setRefreshTable) => {
     alertSuccess,
     alertFail
   );
-  const deleteCategories = (id) => {
-    return deteleM._deleteData(`${CATEGORIES.DELETE}${id}`);
+  const deleteSupplier = (id) => {
+    return deteleM._deleteData(`${SUPPLIER.DELETE}${id}`);
   };
   const deleteM = async (id) => {
-    await deleteCategories(id);
+    await deleteSupplier(id);
   };
   return deleteM;
 };

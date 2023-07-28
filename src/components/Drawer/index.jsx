@@ -3,10 +3,19 @@ import { Button, Drawer, Space } from "antd";
 
 const DrawerCustom = (props) => {
   const handleSubmit = () => {
-    props.formRef.current.validateFields().then((values) => {
-      props.setFormData(values);
-      console.log("Form data:", values);
-    });
+    props.formRef.current
+      .validateFields()
+      .then((values) => {
+        props.setFormData(values);
+        if (props.typeCommon === "product") {
+          values.description = props.description;
+        }
+        props.onPressCreate(values);
+        console.log("Form data:", values);
+      })
+      .catch((error) => {
+        console.error("Error while submitting form:", error);
+      });
   };
   const handleClose = () => {
     props.formRef.current.resetFields();
@@ -17,7 +26,7 @@ const DrawerCustom = (props) => {
     <>
       <Drawer
         title={props.title}
-        width={720}
+        width={props.width ? props.width : 720}
         onClose={handleClose}
         open={props.open}
         bodyStyle={{

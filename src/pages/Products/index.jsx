@@ -1,11 +1,12 @@
-import React, { createRef, useEffect, useState } from "react";
-import { Table } from "antd";
-import { useGetData } from "../../hooks/services/useGetApi";
-import { BRANDS, PRODUCTS } from "../../constants/api";
+import React, { createRef, useState } from "react";
 import { columns } from "./column";
 import CardCustom from "../../components/CardCustom";
 import DrawerCustom from "../../components/Drawer";
 import FormCustom from "../../components/FormCustom";
+import { ProductDataDelete, ProductDataList, ProductDataPost } from "./api";
+import FormProduct from "./Form";
+import TableCustom from "../../components/TableCustom";
+import { Form } from "antd";
 
 const Products = () => {
   const [open, setOpen] = useState(false);
@@ -13,7 +14,13 @@ const Products = () => {
   const [mode, setMode] = useState(0);
   const [formData, setFormData] = useState({});
   const formRef = createRef();
+  const [form] = Form.useForm();
   const [brandSearch, setBrandSearch] = useState();
+  const [refreshTable, setRefreshTable] = useState(false);
+  const data = ProductDataList(keyword, brandSearch, refreshTable);
+  const deleteProductData = ProductDataDelete(refreshTable, setRefreshTable);
+  const createProduct = ProductDataPost(refreshTable, setRefreshTable, setOpen);
+  const [description, setDescription] = useState("");
   const showDrawer = () => {
     setOpen(true);
   };
@@ -24,48 +31,6 @@ const Products = () => {
     setKeyword("");
     setBrandSearch();
   };
-  const getProducts = useGetData(
-    brandSearch
-      ? `${PRODUCTS.LIST}?keyword=${keyword}&brand=${brandSearch}`
-      : `${PRODUCTS.LIST}?keyword=${keyword}`
-  );
-  const getBrands = useGetData(`${BRANDS.LIST}`);
-  useEffect(() => {
-    let isCurrent = true;
-    if (!!isCurrent) {
-      void getProducts._getData();
-    }
-    void getBrands._getData();
-    return () => {
-      isCurrent = false;
-    };
-  }, [keyword, brandSearch]);
-  const brands = [{ value: "", label: "Tất cả" }];
-  getBrands.data.brand &&
-    getBrands.data.brand.forEach((item, i) => {
-      brands.push({
-        value: item.name,
-        label: item.name,
-      });
-    });
-  const data = [];
-  getProducts.data.products &&
-    getProducts.data.products.forEach((item, i) => {
-      data.push({
-        _id: item._id,
-        number: i + 1,
-        name: item.name,
-        price: item.price - (item.price * item.promotion) / 100,
-        promotion: item.promotion,
-        importPrice: item.importPrice,
-        Stock: item.Stock,
-        category: item.category,
-        supplier: item.supplier,
-        brand: item.brand,
-        createdAt: item.createdAt,
-      });
-    });
-
   return (
     <CardCustom
       title="Danh sách sản phẩm"
@@ -74,11 +39,19 @@ const Products = () => {
       setKeyword={setKeyword}
       keyword={keyword}
       mode={0}
-      brands={brands}
+      brands={data?.brands}
       setBrandSearch={setBrandSearch}
       brandSearch={brandSearch}
     >
-      <Table bordered columns={columns} dataSource={data} />
+      <TableCustom
+        columns={columns}
+        dataSource={data?.data}
+        deleteM={deleteProductData}
+        showDrawer={showDrawer}
+        setMode={setMode}
+        mode={0}
+        refreshTable={refreshTable}
+      />
       <DrawerCustom
         title={mode === 0 ? "Thêm mới sản phẩm" : "Chi tiết sản phẩm"}
         mode={mode}
@@ -86,8 +59,17 @@ const Products = () => {
         open={open}
         formRef={formRef}
         setFormData={setFormData}
+        description={description}
+        onPressCreate={createProduct}
+        width={720}
+        typeCommon="product"
       >
-        <FormCustom formRef={formRef} initialValues={formData} />
+        <FormCustom formRef={formRef} initialValues={formData}>
+          <FormProduct
+            setDescription={setDescription}
+            description={description}
+          />
+        </FormCustom>
       </DrawerCustom>
     </CardCustom>
   );

@@ -1,9 +1,6 @@
-import { Space } from "antd";
-import { DeleteOutlined } from "@ant-design/icons";
-
 export const columns = [
   {
-    title: "Tên thương hiệu",
+    title: "Đơn vị phân phối",
     dataIndex: "name",
     key: "name",
     render: (text) => <a>{text}</a>,
@@ -12,20 +9,5 @@ export const columns = [
     title: "Địa chỉ",
     dataIndex: "address",
     key: "address",
-  },
-  {
-    title: "Action",
-    key: "action",
-    width: "5%",
-    align: "center",
-    render: (_, record) => (
-      <Space size="middle">
-        {/* <EditOutlined /> */}
-        <DeleteOutlined
-          style={{ color: "red" }}
-          // onClick={(e) => deleteProductHandler(record._id)}
-        />
-      </Space>
-    ),
   },
 ];

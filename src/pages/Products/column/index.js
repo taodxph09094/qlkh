@@ -1,12 +1,12 @@
-import { Space } from "antd";
 import { formatCurrency } from "../../../helpers";
-import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
 
 export const columns = [
   {
     title: "STT",
     dataIndex: "number",
     key: "number",
+    width: "2%",
+    align: "center",
   },
   {
     title: "Tên sản phẩm",
@@ -77,21 +77,5 @@ export const columns = [
       }/${date.getFullYear()}`;
       return <span>{formattedDate}</span>;
     },
-  },
-  {
-    title: "Action",
-    key: "action",
-    align: "center",
-    render: (_, record) => (
-      <Space size="middle">
-        <EditOutlined
-        // onClick={(e) => showDrawerUpdate(record)}
-        />
-        <DeleteOutlined
-          style={{ color: "red" }}
-          // onClick={(e) => deleteProductHandler(record._id)}
-        />
-      </Space>
-    ),
   },
 ];

@@ -63,8 +63,8 @@ instance.interceptors.response.use(
   async (error) => {
     // Do something with response error
     const { response, message } = error || {};
-    console.log(response);
-    console.log(data);
+    // console.log(response);
+    // console.log(data);
     const { data } = response || {};
     if (response.status === CodeConstants.UnAuthorized) {
       if (response?.data?.code !== CodeConstants.BAD_CREDENTIALS) {

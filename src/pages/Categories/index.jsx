@@ -1,14 +1,19 @@
-import React, { createRef, useEffect, useState } from "react";
-import { Table } from "antd";
-import { useGetData } from "../../hooks/services/useGetApi";
-import { CATEGORIES } from "../../constants/api";
+import React, { createRef, useState } from "react";
 import { columns } from "./column";
 import CardCustom from "../../components/CardCustom";
 import DrawerCustom from "../../components/Drawer";
 import FormCustom from "../../components/FormCustom";
+import {
+  CategoriesDataDelete,
+  CategoriesDataList,
+  CategoriesDataPost,
+} from "./api";
+import TableCustom from "../../components/TableCustom";
+import FormCategories from "./Form";
 
 const Categories = () => {
   const [open, setOpen] = useState(false);
+  const [refreshTable, setRefreshTable] = useState(false);
   const [keyword, setKeyword] = useState("");
   const [mode, setMode] = useState(0);
   const [formData, setFormData] = useState({});
@@ -22,26 +27,13 @@ const Categories = () => {
   const onRefresh = () => {
     setKeyword("");
   };
-  const getCategories = useGetData(`${CATEGORIES.LIST}?keyword=${keyword}`);
-  useEffect(() => {
-    let isCurrent = true;
-    if (!!isCurrent) {
-      void getCategories._getData();
-    }
-    return () => {
-      isCurrent = false;
-    };
-  }, [keyword]);
-
-  const data = [];
-  getCategories.data.categories &&
-    getCategories.data.categories.forEach((item, i) => {
-      data.push({
-        _id: item._id,
-        number: i + 1,
-        name: item.name,
-      });
-    });
+  const categories = CategoriesDataList(keyword, refreshTable);
+  const createCategory = CategoriesDataPost(
+    refreshTable,
+    setRefreshTable,
+    setOpen
+  );
+  const deleteCategory = CategoriesDataDelete(refreshTable, setRefreshTable);
   return (
     <CardCustom
       title="Danh mục sản phẩm"
@@ -51,16 +43,26 @@ const Categories = () => {
       keyword={keyword}
       mode={1}
     >
-      <Table bordered columns={columns} dataSource={data} />
+      <TableCustom
+        columns={columns}
+        dataSource={categories?.data}
+        deleteM={deleteCategory}
+        showDrawer={showDrawer}
+        mode={1}
+        refreshTable={refreshTable}
+      />
       <DrawerCustom
-        title={mode === 0 ? "Thêm mới sản phẩm" : "Chi tiết sản phẩm"}
+        title={"Thêm mới danh mục sản phẩm"}
         mode={mode}
         onClose={onClose}
         open={open}
         formRef={formRef}
         setFormData={setFormData}
+        onPressCreate={createCategory}
       >
-        {/* <FormCustom formRef={formRef} initialValues={formData} /> */}
+        <FormCustom formRef={formRef} initialValues={formData}>
+          <FormCategories />
+        </FormCustom>
       </DrawerCustom>
     </CardCustom>
   );

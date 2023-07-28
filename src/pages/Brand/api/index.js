@@ -1,48 +1,46 @@
 import { useEffect } from "react";
 import { useGetData } from "../../../hooks/services/useGetApi";
+import { BRANDS } from "../../../constants/api";
 import { message } from "antd";
 import { usePostData } from "../../../hooks/services/usePostApi";
 import { useDeleteData } from "../../../hooks/services/useDeleteApi";
-import { CATEGORIES } from "../../../constants/api";
 
-export const CategoriesDataList = (keyword, refreshTable) => {
+export const BrandDataList = (keyword, refreshTable) => {
   const data = [];
-  const getCategories = useGetData(`${CATEGORIES.LIST}?keyword=${keyword}`);
+  const getBrands = useGetData(`${BRANDS.LIST}?keyword=${keyword}`);
   useEffect(() => {
     let isCurrent = true;
     if (!!isCurrent) {
-      void getCategories._getData();
+      void getBrands._getData();
     }
     return () => {
       isCurrent = false;
     };
   }, [keyword, refreshTable]);
-  const categoriesSelect = [{ value: "", label: "Tất cả" }];
-  getCategories.data.categories &&
-    getCategories.data.categories.forEach((item, i) => {
-      categoriesSelect.push({
+  const brandsSelect = [{ value: "", label: "Tất cả" }];
+  getBrands.data.brand &&
+    getBrands.data.brand.forEach((item, i) => {
+      brandsSelect.push({
         value: item.name,
         label: item.name,
       });
     });
-  getCategories.data.categories &&
-    getCategories.data.categories.forEach((item, i) => {
+  getBrands.data.brand &&
+    getBrands.data.brand.forEach((item, i) => {
       data.push({
         _id: item._id,
         number: i + 1,
         name: item.name,
+        address: item.address,
       });
     });
-  const brand = { data, categoriesSelect };
-  if (
-    getCategories.isLoading === false &&
-    getCategories.data.success === true
-  ) {
+  const brand = { data, brandsSelect };
+  if (getBrands.isLoading === false && getBrands.data.success === true) {
     return brand;
   }
 };
 
-export const CategoriesDataPost = (refreshTable, setRefreshTable, setOpen) => {
+export const BrandDataPost = (refreshTable, setRefreshTable, setOpen) => {
   const alertSuccess = (value) => {
     if (value.status === 201) {
       message.success("Thêm thành công");
@@ -63,15 +61,15 @@ export const CategoriesDataPost = (refreshTable, setRefreshTable, setOpen) => {
     alertFail
   );
   const create = (payload) => {
-    return postData._postData(`${CATEGORIES.CREATE}`, payload);
+    return postData._postData(`${BRANDS.CREATE}`, payload);
   };
-  const postCategories = async (payload) => {
+  const postBrand = async (payload) => {
     await create(payload);
   };
-  return postCategories;
+  return postBrand;
 };
 
-export const CategoriesDataDelete = (refreshTable, setRefreshTable) => {
+export const BrandDataDelete = (refreshTable, setRefreshTable) => {
   const alertSuccess = (value) => {
     if (value.status === 200) {
       message.success("Xoá thành công");
@@ -90,11 +88,11 @@ export const CategoriesDataDelete = (refreshTable, setRefreshTable) => {
     alertSuccess,
     alertFail
   );
-  const deleteCategories = (id) => {
-    return deteleM._deleteData(`${CATEGORIES.DELETE}${id}`);
+  const deleteBrand = (id) => {
+    return deteleM._deleteData(`${BRANDS.DELETE}${id}`);
   };
   const deleteM = async (id) => {
-    await deleteCategories(id);
+    await deleteBrand(id);
   };
   return deleteM;
 };

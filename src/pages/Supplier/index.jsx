@@ -1,14 +1,15 @@
-import React, { createRef, useEffect, useState } from "react";
-import { Table } from "antd";
-import { useGetData } from "../../hooks/services/useGetApi";
-import { BRANDS, SUPPLIER } from "../../constants/api";
+import React, { createRef, useState } from "react";
 import { columns } from "./column";
 import CardCustom from "../../components/CardCustom";
 import DrawerCustom from "../../components/Drawer";
 import FormCustom from "../../components/FormCustom";
+import { SupplierDataDelete, SupplierDataList, SupplierDataPost } from "./api";
+import TableCustom from "../../components/TableCustom";
+import FormSupplier from "./Form";
 
 const Supplier = () => {
   const [open, setOpen] = useState(false);
+  const [refreshTable, setRefreshTable] = useState(false);
   const [keyword, setKeyword] = useState("");
   const [mode, setMode] = useState(0);
   const [formData, setFormData] = useState({});
@@ -22,27 +23,13 @@ const Supplier = () => {
   const onRefresh = () => {
     setKeyword("");
   };
-  const getSupplier = useGetData(`${SUPPLIER.LIST}?keyword=${keyword}`);
-  useEffect(() => {
-    let isCurrent = true;
-    if (!!isCurrent) {
-      void getSupplier._getData();
-    }
-    return () => {
-      isCurrent = false;
-    };
-  }, [keyword]);
-
-  const data = [];
-  getSupplier.data.supplier &&
-    getSupplier.data.supplier.forEach((item, i) => {
-      data.push({
-        _id: item._id,
-        number: i + 1,
-        name: item.name,
-        address: item.address,
-      });
-    });
+  const supplier = SupplierDataList(keyword, refreshTable);
+  const createSupplier = SupplierDataPost(
+    refreshTable,
+    setRefreshTable,
+    setOpen
+  );
+  const deleteSupplier = SupplierDataDelete(refreshTable, setRefreshTable);
   return (
     <CardCustom
       title="Danh sách đơn vị phân phối"
@@ -52,16 +39,26 @@ const Supplier = () => {
       keyword={keyword}
       mode={1}
     >
-      <Table bordered columns={columns} dataSource={data} />
+      <TableCustom
+        columns={columns}
+        dataSource={supplier?.data}
+        deleteM={deleteSupplier}
+        showDrawer={showDrawer}
+        mode={1}
+        refreshTable={refreshTable}
+      />
       <DrawerCustom
-        title={mode === 0 ? "Thêm mới sản phẩm" : "Chi tiết sản phẩm"}
+        title={"Thêm mới đơn vị phân phối"}
         mode={mode}
         onClose={onClose}
         open={open}
         formRef={formRef}
         setFormData={setFormData}
+        onPressCreate={createSupplier}
       >
-        <FormCustom formRef={formRef} initialValues={formData} />
+        <FormCustom formRef={formRef} initialValues={formData}>
+          <FormSupplier />
+        </FormCustom>
       </DrawerCustom>
     </CardCustom>
   );
