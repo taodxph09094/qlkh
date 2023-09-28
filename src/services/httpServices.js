@@ -9,12 +9,9 @@ import moment from "moment-timezone";
 const instance = axios.create({
   baseURL: BASE_API_URL,
   timeout: 30000,
-  withCredentials: true,
   headers: {
     Accept: "*/*",
     "Content-Type": "application/json",
-    "Access-Control-Allow-Origin": "*",
-    "Access-Control-Allow-Methods": "GET,PUT,POST,DELETE,PATCH,OPTIONS",
   },
 });
 

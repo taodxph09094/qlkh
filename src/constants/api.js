@@ -1,5 +1,7 @@
 // export const BASE_API_URL = "https://api-new-8e6b.onrender.com/";
 export const BASE_API_URL = "http://localhost:4000/";
+// export const BASE_API_URL = "https://tao.kcfnckht6p.genhosting.net/";
+// export const BASE_API_URL = "http://localhost:8000/";
 
 export const AUTH_URL = {
   LOGIN: "api/v1/login",

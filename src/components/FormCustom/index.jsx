@@ -1,7 +1,6 @@
-import { Col, DatePicker, Form, Input, Row, Select } from "antd";
+import { Form, Select } from "antd";
 import React from "react";
 
-const { Option } = Select;
 const FormCustom = (props) => {
   return (
     <Form
